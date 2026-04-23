@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=scaffold3
+Exec=scaffold3
+Icon=scaffold3
+Categories=Development;
+Terminal=false
+Keywords=wails
+Version=1.0
+StartupNotify=false
