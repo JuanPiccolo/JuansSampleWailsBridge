@@ -8,42 +8,41 @@
     <title>Wails App</title>
 </head>
 <body>
-    <button onclick="SayHello()">#1. Say Hello</button><br>
+    <button id="btn-greet" data-cmd="hello">#1. Say Hello</button>
+    <button id="btn-test" data-cmd="test">#2. Run Test</button>
+    <br>
+    <textarea id="TestStringLandingHTMLID" rows="10" cols="80"></textarea><br>
+    <textarea id="PseudoConsoleHTMLID" rows="10" cols="80"></textarea>   
 
-        <textarea id="TestStringLandingHTMLID" rows="10" cols="80"></textarea><br>
-     <textarea id="PseudoConsoleHTMLID" rows="10" cols="80"></textarea>   
+    <script type="module">
+        import { CallGo as InternalCall } from './bindings/changeme/app.js';
 
-<script type="module">
-    // 1. Import the generated binding. 
-    // Note: Wails v3 usually names the folder after your project name or "main"
-    import { CallGo as InternalCall } from './bindings/changeme/app.js';
+        // Your "Internal" bridge wrapper
+        const CallGo = async (cmd, data = {}) => {
+            try {
+                return await InternalCall(cmd, data);
+            } catch (err) {
+                console.error("Bridge Error:", err);
+            }
+        };
 
-    /**
-     * (A) Your Bridge: Now even simpler.
-     * We just pass a command name and a single data object.
-     */
-    const CallGo = async (cmd, data = {}) => {
-        try {
-            return await InternalCall(cmd, data);
-        } catch (err) {
-            console.error("Bridge Error:", err);
-            document.getElementById("PseudoConsoleHTMLID").value += `\nError: ${err}`;
-        }
-    };
+        // --- THE DISPATCHER ---
+        document.addEventListener('click', async (event) => {
+            // Check if the clicked element has our custom data-cmd attribute
+            const cmd = event.target.dataset.cmd;
+            if (!cmd) return; // Ignore clicks on non-buttons
 
-    /**
-     * (B) Your Logic: Clean and readable.
-     */
-    async function SayHello() {
-        // We send "hello" as the cmd, and an object with the data
-        let out = await CallGo("hello", { name: "Juan" });
-        
-        document.getElementById("TestStringLandingHTMLID").value = out;
-        document.getElementById("PseudoConsoleHTMLID").value += `\n[System]: Received "${out}"`;
-    }
-
-    // (C) Expose to the window so the 'onclick' attribute can see it
-    window.SayHello = SayHello; 
-</script>
+            // Centralized Logic based on the command
+            if (cmd === "hello") {
+                const out = await CallGo("hello", { name: "Juan" });
+                document.getElementById("TestStringLandingHTMLID").value = out;
+            } 
+            
+            if (cmd === "test") {
+                const out = await CallGo("test");
+                document.getElementById("PseudoConsoleHTMLID").value += `\n[Test]: ${out}`;
+            }
+        });
+    </script>
 </body>
 </html>
