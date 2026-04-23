@@ -1,2 +1,2 @@
 # JuansSampleWailsBridge
-A sample of my custom bridge for go
+An example of how I would like to make Go calls from JS so that my projects can easily transfer into wails3
